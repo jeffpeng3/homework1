@@ -9,14 +9,16 @@
 void strrev(char *str)
 {
 	char *temp = str;
-	while (temp++)
+	while (*(temp++))
 		;
 	temp -= 2;
-	while (str > temp)
+	while (str < temp)
 	{
 		*str ^= *temp;
 		*temp ^= *str;
 		*str ^= *temp;
+		str++;
+		temp--;
 	}
 }
 #endif
@@ -27,7 +29,7 @@ typedef struct _node
 	uint64_t length;
 	struct _node *next;
 } node;
-node *loadNumFromString(node *root, node *last, char *str, int *count)
+node *loadNumFromString(node *root, node *last, char *str)
 {
 	static char *token = " ,";
 	static char *tempPtr = NULL;
@@ -47,6 +49,14 @@ node *loadNumFromString(node *root, node *last, char *str, int *count)
 		{
 			fprintf(stderr, "error at line %d,memory allocate failed", __LINE__);
 			abort();
+		}
+	}
+	else if (!last)
+	{
+		last = root;
+		while (last->next)
+		{
+			last = last->next;
 		}
 	}
 
@@ -76,8 +86,7 @@ node *loadNumFromString(node *root, node *last, char *str, int *count)
 		}
 		strcpy_s(current->numString, strlen(tempPtr) + 1, tempPtr);
 		current->length = strlen(current->numString);
-		(*count)++;
-		return loadNumFromString(root, current, 0, count);
+		return loadNumFromString(root, current, 0);
 	}
 	return root;
 }
@@ -102,6 +111,11 @@ char *getStringFromFile(FILE *file)
 }
 void printAllList(node *current)
 {
+	if (!current)
+	{
+		printf("linked list is not exist!\n");
+		return;
+	}
 	printf("%s\n", current->numString);
 	if (current->next)
 	{
@@ -110,10 +124,20 @@ void printAllList(node *current)
 }
 void printNode(node *current)
 {
+	if (!current)
+	{
+		printf("linked list is not exist!\n");
+		return;
+	}
 	printf("%s\n", current->numString);
 }
 node *getLargestNode(node *current)
 {
+	if (!current)
+	{
+		printf("linked list is not exist!\n");
+		return NULL;
+	}
 	node *largest = current;
 	current = current->next;
 	for (; current; current = current->next)
@@ -135,40 +159,54 @@ node *getLargestNode(node *current)
 	}
 	return largest;
 }
-void duplicate(node *root)
+void deduplicate(node *root, node *current)
 {
 	char *map = calloc(1024, sizeof(char));
+	if (!root)
+	{
+		printf("linked list is not exist!\n");
+		return;
+	}
 	if (map)
 	{
-		for (node *last = root; root; root = last->next)
+		for (node *last = current; current; current = last->next)
 		{
 
-			for (node *i = root->next; i; i = i->next)
+			for (node *i = current->next; i; i = i->next)
 			{
-				if (root->length != i->length)
+				if (current->length != i->length)
 				{
 					continue;
 				}
-				if (strcmp(root->numString, i->numString))
+				if (strcmp(current->numString, i->numString))
 				{
 					continue;
 				}
-				node *temp = root;
-				last->next = root->next;
+				node *temp = current;
+				if (last)
+				{
+					last->next = current->next;
+				}
+				else
+				{
+					root = current->next;
+				}
 				free(temp);
-				root = last->next;
+				current = last->next;
 				break;
 			}
-			last = root;
+			last = current;
 		}
 	}
 }
 void addToFirstNode(char *sum, char *target)
 {
+	char *predicate = sum;
 	short sumEnd = 0, targetEnd = 0, carry = 0;
 	while (!(sumEnd & targetEnd))
 	{
 		*sum -= '0';
+		*sum += carry;
 		if (!targetEnd)
 		{
 			*sum += *target - '0';
@@ -181,10 +219,15 @@ void addToFirstNode(char *sum, char *target)
 		carry = *sum / 10;
 		*sum = *sum % 10;
 		*sum += '0';
-		if (!sumEnd)
+		sum++;
+		if (!*sum)
 		{
-			sum++;
-			if (!*sum)
+			if (!targetEnd || carry)
+			{
+				*sum = '0';
+				*(sum + 1) = 0;
+			}
+			else
 			{
 				sumEnd = 1;
 			}
@@ -193,6 +236,11 @@ void addToFirstNode(char *sum, char *target)
 }
 void sumAndPrintList(node *root)
 {
+	if (!root)
+	{
+		printf("linked list is not exist!\n");
+		return;
+	}
 	node sum;
 	sum.length = 1;
 	sum.numString = calloc(2, sizeof(char));
@@ -203,29 +251,99 @@ void sumAndPrintList(node *root)
 	{
 		if (sum.length <= root->length)
 		{
-			sum.numString = realloc(sum.numString, sizeof(char) * (root->length + 1));
+			sum.numString = realloc(sum.numString, sizeof(char) * (root->length + 2));
+			sum.length = root->length + 1;
 		}
 		strrev(root->numString);
 		addToFirstNode(sum.numString, root->numString);
 		strrev(root->numString);
 	}
 	strrev(sum.numString);
-	printf("%s", sum.numString);
+	printf("the sum is:");
+	printNode(&sum);
 }
-
+int nodeCount(node *root)
+{
+	int count = 0;
+	while (root)
+	{
+		root = root->next;
+		count++;
+	}
+	return count;
+}
 int main()
 {
 	FILE *dataSource;
-	int count = 0;
-	fopen_s(&dataSource, "./number.txt", "r");
-	char *string = getStringFromFile(dataSource);
-	node *root = loadNumFromString(NULL, NULL, string, &count);
-	printAllList(root);
-	printf("\nthe largest is:\n");
-	printNode(getLargestNode(root));
-	printf("\nafter duplicate:\n");
-	duplicate(root);
-	printAllList(root);
 
+	node *root = NULL;
+	char mode;
+	const char *prompt =
+		"=================================================================================\n\
+	(a) Read an integer file to build the linked lists.\n\
+	(b) Count the number of integers.\n\
+	(c) Find the largest integer for all integers in the lists.\n\
+	(d) Remove duplicate integers for each list and print out the resulting lists.\n\
+	(e) Sum all the distinct integers\n\
+	(q) Quit.\n\
+please select mode:";
+	while (1)
+	{
+		printf(prompt);
+		scanf(" %c", &mode);
+		switch (mode)
+		{
+		case 'a':
+			printf("Loading......\n");
+			fopen_s(&dataSource, "./number.txt", "r");
+			char *string = getStringFromFile(dataSource);
+			root = loadNumFromString(root, NULL, string);
+			fclose(dataSource);
+			printf("Load done.\n");
+			break;
+		case 'b':
+			printf("node count is:%d\n", nodeCount(root));
+			break;
+		case 'c':
+			printf("node list:\n=================================\n");
+			printNode(getLargestNode(root));
+			break;
+		case 'd':
+			printf("ready to deduplication...\n");
+			deduplicate(root, root);
+			printf("deduplication done.\n");
+			break;
+		case 'e':
+			sumAndPrintList(root);
+			break;
+		case 'q':
+			return 0;
+			break;
+
+		default:
+			printf("unknown mode\n");
+			continue;
+		}
+		printf("now list's data:\n");
+		printf("===============================\n");
+		printAllList(root);
+		// printf("\nthe largest is:\n");
+		// printNode(getLargestNode(root));
+		// printf("\nafter duplicate:\n");
+		// duplicate(root);
+		// printAllList(root);
+		// sumAndPrintList(root);
+		// printf("\n350211429222974\n");
+	}
 	return 0;
 }
+/*
+EQ
+NQ
+HI
+LS
+GE
+LT
+GT
+LE
+*/
