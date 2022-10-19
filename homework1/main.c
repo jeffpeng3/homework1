@@ -2,6 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef __linux__
+#define strtok_s(s,tok,useless) strtok(s,tok)
+#define fopen_s(ptr,path,mode) *ptr = fopen(path,mode)
+#define strcpy_s(dest,len,src) strcpy(dest,src)
+#endif
+
 
 typedef struct _node
 {
