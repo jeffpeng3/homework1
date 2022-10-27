@@ -33,6 +33,7 @@ typedef struct _node
 {
 	char* numString;
 	uint64_t length;
+	short sign;
 	struct _node* next;
 } node;
 node* loadNumFromString(node* root, node* last, char* str)
@@ -48,6 +49,7 @@ node* loadNumFromString(node* root, node* last, char* str)
 		{
 			root->next = NULL;
 			root->length = 0;
+			root->sign = 1;
 			root->numString = NULL;
 			current = root;
 		}
@@ -76,6 +78,7 @@ node* loadNumFromString(node* root, node* last, char* str)
 			{
 				current->next = NULL;
 				current->length = 0;
+				current->sign = 1;
 				current->numString = NULL;
 				last->next = current;
 			}
@@ -84,6 +87,10 @@ node* loadNumFromString(node* root, node* last, char* str)
 				fprintf(stderr, "error at line %d,memory allocate failed", __LINE__);
 				abort();
 			}
+		}
+		if (*tempPtr == '-'){
+			current -> sign = 0;
+			tempPtr++;
 		}
 		current->numString = calloc(strlen(tempPtr) + 1, sizeof(char));
 		if (!current->numString)
@@ -122,7 +129,7 @@ void printAllList(node* current)
 		printf("linked list is not exist!\n");
 		return;
 	}
-	printf("%s\n", current->numString);
+	printf("%c%s\n",current-> sign ? 0:'-', current->numString);
 	if (current->next)
 	{
 		printAllList(current->next);
@@ -135,7 +142,7 @@ void printNode(node* current)
 		printf("linked list is not exist!\n");
 		return;
 	}
-	printf("%s\n", current->numString);
+	printf("%c%s\n",current-> sign ? 0:'-', current->numString);
 }
 node* getLargestNode(node* current)
 {
@@ -147,6 +154,9 @@ node* getLargestNode(node* current)
 	current = current->next;
 	for (; current; current = current->next)
 	{
+		if (largest -> sign > current -> sign){
+			continue;
+		}
 		if (largest->length > current->length)
 		{
 			continue;
@@ -156,7 +166,8 @@ node* getLargestNode(node* current)
 			largest = current;
 			continue;
 		}
-		if (strcmp(largest->numString, current->numString) < 0)
+		int cmp = strcmp(largest->numString, current->numString);
+		if ((largest -> sign && cmp < 0)||(!largest -> sign && cmp > 0))
 		{
 			largest = current;
 			continue;
@@ -237,6 +248,7 @@ void sumAndPrintList(node* root)
 	sum.length = 1;
 	sum.numString = calloc(2, sizeof(char));
 	sum.numString[0] = '0';
+	sum.sign = 1;
 	sum.next = NULL;
 	myStrrev(sum.numString);
 	for (; root; root = root->next)
