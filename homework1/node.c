@@ -1,5 +1,5 @@
 #include "node.h"
-node* loadNumFromString(node* root, node* last, char* str)
+node* loadNumFromString(node* root, node* last, char* str)  //use token to split string and transform string to node
 {
 	static char* token = " ,";
 	static char* tempPtr = NULL;
@@ -67,7 +67,7 @@ node* loadNumFromString(node* root, node* last, char* str)
 	return root;
 }
 
-void printAllList(node* current)
+void printAllList(node* current) // a recursion function to print linked list 
 {
 	if (!current)
 	{
@@ -81,7 +81,7 @@ void printAllList(node* current)
 	}
 }
 
-void printNode(node* current)
+void printNode(node* current) //a normal function to print a single node
 {
 	if (!current)
 	{
@@ -91,7 +91,7 @@ void printNode(node* current)
 	printf("%c%s\n",current-> sign ? 0:'-', current->numString);
 }
 
-node* getLargestNode(node* current)
+node* getLargestNode(node* current) // use multiple conditions to find the largest node
 {
 	if (!current)
 	{
@@ -123,7 +123,7 @@ node* getLargestNode(node* current)
 	return largest;
 }
 
-void addToFirstNode(char* sum, char* target)
+void addToFirstNode(char* sum, char* target) // add target to sum
 {
 	char* predicate = sum;
 	short sumEnd = 0, targetEnd = 0, carry = 0;
@@ -159,7 +159,7 @@ void addToFirstNode(char* sum, char* target)
 	}
 }
 
-node* deduplicate(node* current)
+node* deduplicate(node* current) // an O(n^2) deduplicate funcction
 {
 	node* root = current;
 	if (!root)

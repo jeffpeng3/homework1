@@ -1,5 +1,5 @@
 #include "utils.h"
-void myStrrev(char* str)
+void myStrrev(char* str) //reverse string
 {
 	char* temp = str;
 	while (*(temp++))
@@ -15,7 +15,7 @@ void myStrrev(char* str)
 	}
 }
 
-char* getStringFromFile(FILE* file)
+char* getStringFromFile(FILE* file) // allocate a char array to load file's string
 {
 	uint32_t size = 0;
 	fseek(file, 0, SEEK_END);
