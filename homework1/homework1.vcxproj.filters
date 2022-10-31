@@ -18,10 +18,27 @@
     <ClCompile Include="main.c">
       <Filter>來源檔案</Filter>
     </ClCompile>
+    <ClCompile Include="node.c">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.c">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="number.txt">
       <Filter>資源檔</Filter>
     </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="compatiable.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="node.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
