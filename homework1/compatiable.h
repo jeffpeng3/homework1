@@ -1,3 +1,4 @@
+#pragma once
 #ifdef __linux__
 #define strtok_s(s, tok, useless) strtok(s, tok)
 #define fopen_s(ptr, path, mode) *ptr = fopen(path, mode)
