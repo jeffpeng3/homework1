@@ -5,7 +5,7 @@ node* loadNumFromString(node* root, node* last, char* str)  //use token to split
 	static char* tempPtr = NULL;
 	static char* strtokBuffer = NULL;
 	node* current = NULL;
-	if (!root)
+	if (!root) //create root node if root is not exist
 	{
 		root = calloc(1, sizeof(node));
 		if (root != NULL)
@@ -31,7 +31,7 @@ node* loadNumFromString(node* root, node* last, char* str)  //use token to split
 		}
 	}
 
-	tempPtr = strtok_s(str, token, &strtokBuffer);
+	tempPtr = strtok_s(str, token, &strtokBuffer); //take apart of string
 	if (tempPtr)
 	{
 		if (!current)
@@ -60,7 +60,7 @@ node* loadNumFromString(node* root, node* last, char* str)  //use token to split
 		{
 			exit(EXIT_FAILURE);
 		}
-		strcpy_s(current->numString, strlen(tempPtr) + 1, tempPtr);
+		strcpy_s(current->numString, strlen(tempPtr) + 1, tempPtr);//copy string into node
 		current->length = strlen(current->numString);
 		return loadNumFromString(root, current, 0);
 	}
@@ -123,9 +123,19 @@ node* getLargestNode(node* current) // use multiple conditions to find the large
 	return largest;
 }
 
+int nodeCount(node* root)
+{
+	int count = 0;
+	while (root)
+	{
+		root = root->next;
+		count++;
+	}
+	return count;
+}
+
 void addToFirstNode(char* sum, char* target) // add target to sum
 {
-	char* predicate = sum;
 	short sumEnd = 0, targetEnd = 0, carry = 0;
 	while (!(sumEnd & targetEnd))
 	{
@@ -218,15 +228,4 @@ void sumAndPrintList(node* root)
 	myStrrev(sum.numString);
 	printf("the sum is:");
 	printNode(&sum);
-}
-
-int nodeCount(node* root)
-{
-	int count = 0;
-	while (root)
-	{
-		root = root->next;
-		count++;
-	}
-	return count;
 }
