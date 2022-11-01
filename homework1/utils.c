@@ -6,13 +6,14 @@ node* root = NULL;
 FILE* dataSource;
 char fileName[51] = { 0 };
 const char* prompt =
-"	(a) Read an integer file to build the linked lists.\n\
-	(b) Count the number of integers.\n\
-	(c) Find the largest integer for all integers in the lists.\n\
-	(d) Remove duplicate integers for each list and print out the resulting lists.\n\
-	(e) Sum all the distinct integers.\n\
-	(f) Print all nodes.\n\
-	(q) Quit.\n\
+"code	description\n\
+(a)	Read an integer file to build the linked lists.\n\
+(b)	Count the number of integers.\n\
+(c)	Find the largest integer for all integers in the lists.\n\
+(d)	Remove duplicate integers for each list and print out the resulting lists.\n\
+(e)	Sum all the distinct integers.\n\
+(f)	Print all nodes.\n\
+(q)	Quit.\n\
 please select mode:";
 
 void myStrrev(char* str) //reverse string
@@ -29,6 +30,27 @@ void myStrrev(char* str) //reverse string
 		str++;
 		temp--;
 	}
+}
+
+
+char* getStringFromFile(FILE* file) // allocate a char array to load file's string
+{
+	uint32_t size = 0;
+	fseek(file, 0, SEEK_END);
+	size = ftell(file);
+	fseek(file, 0, SEEK_SET);
+	char* temp = calloc((uint64_t)size + 2, sizeof(char));
+	if (temp)
+	{
+		fgets(temp, size + 2, file);
+	}
+	else
+	{
+		fprintf(stderr, "error at line %d,memory allocate failed", __LINE__);
+		abort();
+	}
+
+	return temp;
 }
 
 int seleteOperation(char mode)
@@ -93,24 +115,4 @@ int seleteOperation(char mode)
 	}
 	printf("========================================================================================\n");
 	return 0;
-}
-
-char* getStringFromFile(FILE* file) // allocate a char array to load file's string
-{
-	uint32_t size = 0;
-	fseek(file, 0, SEEK_END);
-	size = ftell(file);
-	fseek(file, 0, SEEK_SET);
-	char* temp = calloc((uint64_t)size + 2, sizeof(char));
-	if (temp)
-	{
-		fgets(temp, size + 2, file);
-	}
-	else
-	{
-		fprintf(stderr, "error at line %d,memory allocate failed", __LINE__);
-		abort();
-	}
-
-	return temp;
 }

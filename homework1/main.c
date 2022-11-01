@@ -16,13 +16,3 @@ int main()
 	}
 	return 0;
 }
-/*
-EQ
-NQ
-HI
-LS
-GE
-LT
-GT
-LE
-*/
