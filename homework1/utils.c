@@ -78,10 +78,8 @@ int seleteOperation(char mode)
 			printf("Loading...\n");
 			char* string = getStringFromFile(dataSource); // try to load file
 			root = loadNumFromString(root, NULL, string); // pharse string to linked list
-			if (dataSource)
-			{
-				fclose(dataSource);                       // close file if file is opened
-			}
+			fclose(dataSource);                       // close file if file is opened
+			free(string);
 			printf("Load done.\n");
 			return 0;
 		case 'b':

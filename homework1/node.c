@@ -8,7 +8,7 @@ node* loadNumFromString(node* root, node* last, char* str)  //use token to split
 	if (!root) //create root node if root is not exist
 	{
 		root = calloc(1, sizeof(node));
-		if (root != NULL)
+		if (root != NULL) //create root node if root is not exist
 		{
 			root->next = NULL;
 			root->length = 0;
@@ -22,7 +22,7 @@ node* loadNumFromString(node* root, node* last, char* str)  //use token to split
 			abort();
 		}
 	}
-	else if (!last)
+	else if (!last) // init last node when first run
 	{
 		last = root;
 		while (last->next)
@@ -123,7 +123,7 @@ node* getLargestNode(node* current) // use multiple conditions to find the large
 	return largest;
 }
 
-int nodeCount(node* root)
+int nodeCount(node* root) // run until root(current) is NULL(false)
 {
 	int count = 0;
 	while (root)
@@ -137,7 +137,7 @@ int nodeCount(node* root)
 void addToFirstNode(char* sum, char* target) // add target to sum
 {
 	short sumEnd = 0, targetEnd = 0, carry = 0;
-	while (!(sumEnd & targetEnd))
+	while (!(sumEnd & targetEnd))  // main add part
 	{
 		*sum -= '0';
 		*sum += carry;
@@ -181,15 +181,15 @@ node* deduplicate(node* current) // an O(n^2) deduplicate funcction
 	{
 		for (node* lastNode = current, *thisNode = current->next; thisNode; lastNode = thisNode, thisNode = thisNode->next)
 		{
-			if (current->length != thisNode->length)
+			if (current->length != thisNode->length) //length deff
 			{
 				continue;
 			}
-			if (strcmp(current->numString, thisNode->numString))
+			if (strcmp(current->numString, thisNode->numString)) //context deff
 			{
 				continue;
 			}
-			lastNode->next = thisNode->next;
+			lastNode->next = thisNode->next;// is duplicate
 			free(thisNode);
 			thisNode = lastNode;
 		}
@@ -210,9 +210,9 @@ void sumAndPrintList(node* root)
 	sum.sign = 1;
 	sum.next = NULL;
 	myStrrev(sum.numString);
-	for (; root; root = root->next)
+	for (; root; root = root->next) //add each node
 	{
-		if (sum.length <= root->length)
+		if (sum.length <= root->length) //extend node size if need
 		{
 			char* temp = realloc(sum.numString, sizeof(char) * (root->length + 2));
 			if (temp)
@@ -221,9 +221,9 @@ void sumAndPrintList(node* root)
 			}
 			sum.length = root->length + 1;
 		}
-		myStrrev(root->numString);
+		myStrrev(root->numString); //reverse string to add
 		addToFirstNode(sum.numString, root->numString);
-		myStrrev(root->numString);
+		myStrrev(root->numString); //reverse again to restore data
 	}
 	myStrrev(sum.numString);
 	printf("the sum is:");
